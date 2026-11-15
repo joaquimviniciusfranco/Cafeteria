@@ -8,7 +8,11 @@
 
   "description": "Bebida concentrada e encorpada",
 
-  "price" : 5.0
+  "price" : 5.0,
+
+  "image": "imagens/coado.jpg",
+
+  "ingredients": ["Café", "Água"]
   },
 
   {
@@ -21,8 +25,11 @@
 
     "description": "xícara limpa, com corpo leve a médio, acidez equilibrada e sabor suave",
 
-    "price" : 4.50
+    "price" : 4.50,
 
+    "image": "imagens/coado.jpg",  
+
+    "ingredients": ["Café", "Água"]
   },
   {
 
@@ -32,9 +39,12 @@
 
     "description": "é uma bebida quente de origem italiana que combina café e leite de forma equilibrada",
 
-    "price" : 7.0
+    "price" : 7.0,
 
 
+    "image": "imagens/cappucino.jpg",
+
+    "ingredients" : ["Café", "Leite", "Chocolate"]
 
 
 

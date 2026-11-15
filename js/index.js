@@ -1,10 +1,6 @@
 const root = document.getElementById("root");
 const STORAGE_KEY = "cafeteria:carrinho";
-const cafesLocais = [
-  { id: 1, title: "Expresso", description: "Bebida concentrada e encorpada", price: 5.0 },
-  { id: 2, title: "Coado", description: "Xícara limpa, corpo leve a médio e sabor suave", price: 4.5 },
-  { id: 3, title: "Cappuccino", description: "Bebida italiana que combina café e leite", price: 7.0 },
-];
+
 
 function lerCarrinho() {
   try {
@@ -52,7 +48,11 @@ function montarBase() {
   const containerNav = criarElemento("div", "container");
   const marca = criarElemento("a", "navbar-brand", "Cafeteria");
   marca.href = "#inicio";
-  const linkCarrinho = criarElemento("a", "btn btn-outline-light", "Carrinho ");
+  const linkCarrinho = criarElemento(
+  "a",
+  "btn btn-outline-light",
+  "🛒 Carrinho "
+);
   linkCarrinho.href = "#carrinho";
   const contador = criarElemento("span", "badge bg-warning text-dark", "0");
   contador.id = "contador-carrinho";
@@ -69,32 +69,85 @@ function montarBase() {
 
 function criarCartao(cafe) {
   const coluna = criarElemento("div", "col-12 col-md-6 col-lg-4");
+
   const cartao = criarElemento("article", "card h-100 shadow-sm");
-  const corpo = criarElemento("div", "card-body d-flex flex-column");
+
+  // Cria a imagem do café.
+  const imagem = criarElemento("img", "card-img-top");
+  imagem.src = cafe.image;
+  imagem.alt = cafe.title;
+  imagem.style.height = "220px";
+  imagem.style.objectFit = "cover";
+
+  const corpo = criarElemento(
+    "div",
+    "card-body d-flex flex-column"
+  );
+
+  // Transforma a lista de ingredientes em texto.
+  const ingredientes = criarElemento(
+    "p",
+    "card-text",
+    "Ingredientes: " + cafe.ingredients.join(", ")
+  );
+
   corpo.append(
     criarElemento("h2", "h5 card-title", cafe.title),
     criarElemento("p", "card-text text-muted", cafe.description),
-    criarElemento("p", "fw-bold mt-auto", moeda(cafe.price)),
+    ingredientes,
+    criarElemento("p", "fw-bold mt-auto", moeda(cafe.price))
   );
-  const botao = criarElemento("button", "btn btn-primary", "Adicionar ao carrinho");
+
+  const botao = criarElemento(
+    "button",
+    "btn btn-primary",
+    "Adicionar ao carrinho"
+  );
+
   botao.type = "button";
+
   botao.addEventListener("click", () => {
     window.adicionarAoCarrinho(cafe);
+
     botao.textContent = "Adicionado!";
-    setTimeout(() => (botao.textContent = "Adicionar ao carrinho"), 900);
+
+    setTimeout(() => {
+      botao.textContent = "Adicionar ao carrinho";
+    }, 900);
   });
+
   corpo.append(botao);
-  cartao.append(corpo);
+
+  // Coloca a imagem antes do corpo do cartão.
+  cartao.append(imagem, corpo);
+
   coluna.append(cartao);
+
   return coluna;
 }
 
-function renderizarInicio() {
+
+
+async function renderizarInicio() {
   const main = montarBase();
-  main.append(criarElemento("h1", "text-center mb-4", "Nossos cafés"));
+
+  main.append(
+    criarElemento("h1", "text-center mb-4", "Nossos cafés")
+  );
+
   const lista = criarElemento("div", "row g-4");
-  cafesLocais.forEach((cafe) => lista.append(criarCartao(cafe)));
   main.append(lista);
+
+  // Busca os cafés na API.
+  const resposta = await fetch("http://localhost:3000/cafes");
+
+  // Transforma a resposta em dados que o JavaScript consegue usar.
+  const cafes = await resposta.json();
+
+  // Cria um cartão para cada café recebido.
+  cafes.forEach((cafe) => {
+    lista.append(criarCartao(cafe));
+  });
 }
 
 function renderizarCarrinho() {
