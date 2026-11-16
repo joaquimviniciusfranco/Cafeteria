@@ -26,8 +26,18 @@ function atualizarContadorCarrinho() {
 window.adicionarAoCarrinho = function (cafe) {
   const carrinho = lerCarrinho();
   const existente = carrinho.find((item) => String(item.id) === String(cafe.id));
-  if (existente) existente.quantity += 1;
-  else carrinho.push({ id: cafe.id, title: cafe.title, price: Number(cafe.price), quantity: 1 });
+  if (existente) {
+    existente.quantity += 1;
+    existente.image = cafe.image;
+  } else {
+    carrinho.push({
+      id: cafe.id,
+      title: cafe.title,
+      price: Number(cafe.price),
+      image: cafe.image,
+      quantity: 1,
+    });
+  }
   salvarCarrinho(carrinho);
 };
 
@@ -204,7 +214,7 @@ function removerItem(id) {
   renderizarCarrinho();
 }
 
-function renderizarCheckout() {
+async function renderizarCheckout() {
   const main = montarBase();
   const carrinho = lerCarrinho();
   main.append(criarElemento("h1", "mb-4", "Finalizar pedido"));
@@ -212,8 +222,47 @@ function renderizarCheckout() {
     main.append(criarElemento("p", "", "Adicione pelo menos um café antes de finalizar o pedido."));
     return;
   }
+
+  // Recupera as imagens também para itens que já estavam salvos antes da mudança.
+  try {
+    const resposta = await fetch("http://localhost:3000/cafes");
+    if (resposta.ok) {
+      const cafes = await resposta.json();
+      carrinho.forEach((item) => {
+        const cafe = cafes.find((produto) => String(produto.id) === String(item.id));
+        if (!item.image && cafe) item.image = cafe.image;
+      });
+      salvarCarrinho(carrinho);
+    }
+  } catch {
+    // O resumo continua sendo exibido caso a API esteja indisponível.
+  }
+
+  // Exibe os produtos que serão pedidos antes de a pessoa confirmar a compra.
+  main.append(criarElemento("h2", "h4 mb-3", "Resumo dos produtos"));
+  const listaProdutos = criarElemento("div", "list-group mb-4");
+  carrinho.forEach((item) => {
+    const linha = criarElemento("div", "list-group-item d-flex flex-wrap align-items-center gap-3");
+    if (item.image) {
+      const imagem = criarElemento("img", "rounded");
+      imagem.src = item.image;
+      imagem.alt = item.title;
+      imagem.style.width = "90px";
+      imagem.style.height = "70px";
+      imagem.style.objectFit = "cover";
+      linha.append(imagem);
+    }
+    linha.append(
+      criarElemento("strong", "me-auto", item.title),
+      criarElemento("span", "", `${item.quantity} × ${moeda(item.price)}`),
+      criarElemento("strong", "", moeda(item.price * item.quantity)),
+    );
+    listaProdutos.append(linha);
+  });
+  main.append(listaProdutos);
+
   const resumo = carrinho.reduce((soma, item) => soma + item.price * item.quantity, 0);
-  main.append(criarElemento("p", "fs-5 mb-4", `Total do pedido: ${moeda(resumo)}`));
+  main.append(criarElemento("p", "fs-4 fw-bold text-end mb-4", `Total do pedido: ${moeda(resumo)}`));
   const form = criarElemento("form", "row g-3");
   const endereco = criarElemento("input", "form-control");
   endereco.id = "endereco";
