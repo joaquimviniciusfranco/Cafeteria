@@ -3,8 +3,7 @@ function atualizarContadorCarrinho() {
   if (contador) contador.textContent = lerCarrinho().reduce((soma, item) => soma + item.quantity, 0);
 }
 
-// Contrato para a tela de produtos: chamar window.adicionarAoCarrinho(cafe).
-// Produto recebido no formato de db.json: { id, title, description, price }.
+
 
 function montarBase() {
   root.replaceChildren();

@@ -1,4 +1,4 @@
-// Comunicação com a API local de cafés.
+// comunicando com a api local
 async function buscarCafes() {
   const resposta = await fetch("http://localhost:3000/cafes");
 

@@ -1,4 +1,4 @@
-// Página inicial e navegação entre as telas.
+
 const root = document.getElementById("root");
 
 function criarCartao(cafe) {
@@ -18,7 +18,7 @@ function criarCartao(cafe) {
     "card-body d-flex flex-column"
   );
 
-  // Transforma a lista de ingredientes em texto.
+  // Transformando a lista de ingredientes em texto.
   const ingredientes = criarElemento(
     "p",
     "card-text",
@@ -52,7 +52,7 @@ function criarCartao(cafe) {
 
   corpo.append(botao);
 
-  // Coloca a imagem antes do corpo do cartão.
+  // Coloca a imagem antes do corpo do cartao.
   cartao.append(imagem, corpo);
 
   coluna.append(cartao);
@@ -70,10 +70,10 @@ async function renderizarInicio() {
   const lista = criarElemento("div", "row g-4");
   main.append(lista);
 
-  // Busca os cafés usando a função do arquivo api.js.
+  // Busca os cafes usando a funcao do  arquivo da api.js.
   const cafes = await buscarCafes();
 
-  // Cria um cartão para cada café recebido.
+  // Cria um cartão para cada cafe recebido.
   cafes.forEach((cafe) => {
     lista.append(criarCartao(cafe));
   });
