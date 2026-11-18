@@ -107,7 +107,7 @@ function renderizarCarrinho() {
     // Mostra o valor total formatado como moeda.
   main.append(criarElemento("p", "fs-4 fw-bold text-end", `Total: ${moeda(total)}`));
   // Cria o link para seguir até a tela de checkout.
-  const checkout = criarElemento("a", "btn btn-success", "Ir para checkout");
+  const checkout = criarElemento("a", "btn btn-primary", "Ir para checkout");
   checkout.href = "#checkout";
   main.append(checkout);
 }
